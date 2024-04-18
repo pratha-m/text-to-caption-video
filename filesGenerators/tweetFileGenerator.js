@@ -13,6 +13,8 @@ const tweetHtmlGenerator=(dynamicText)=>{
         background-color: #323232;
         margin: 0;
         padding: 0;
+        height: 1084px;
+        width: 1084px;   
     }
     .tweet {
         background-color: #fff;
