@@ -1,15 +1,16 @@
 const express=require("express");
 const { createEachFrameVideo, mergeVideoFfmpeg, fileTypes, absolutePathGen } = require("./features/VideoFunctions");
 const fs =require("fs");
-const path = require("path");
 const app=express();
+const cors=require("cors");
 
+app.use(cors())
 app.use(express.json());
-
-app.get("/",(req,res)=>{
-    res.sendFile(process.cwd()+"/index.html");
-})
     
+app.get("/",(req,res)=>{
+    res.send("Home");
+})
+
 app.post("/create-video",async(req,res)=>{
     try{
         const {tweet}=req.body; 
@@ -32,7 +33,7 @@ app.get("/render-video/:video_file",async(req,res)=>{
     try{
         const vidoFileName=req.params.video_file;
         const videoPath=absolutePathGen(fileTypes.merged_video.folderPath,vidoFileName)
-        const range=req.headers.range;
+        const range="Byes=0-";
         const videoSize=fs.statSync(videoPath).size;
         const chunkSize=1*1e6;
         const start = Number(range.replace(/\D/g, "")) 
@@ -49,7 +50,8 @@ app.get("/render-video/:video_file",async(req,res)=>{
         stream.pipe(res);           
     }
     catch(error){
-        return res.status(501).json({status:"failed",message:"Error in creating video",error:error.message}); 
+        console.log(error)
+        return res.status(501).json({status:"failed",message:"Error in Rendering video",error:error.message}); 
     }
 })
 

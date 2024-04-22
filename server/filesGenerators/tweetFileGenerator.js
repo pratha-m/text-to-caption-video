@@ -8,7 +8,7 @@ const tweetHtmlGenerator=(dynamicText)=>{
         <title>Dummy Tweet</title>
         <link rel="stylesheet" href="styles.css">
         <style>
-    body {
+    body{
         font-family: Arial, sans-serif;
         background-color: #323232;
         margin: 0;
@@ -23,8 +23,8 @@ const tweetHtmlGenerator=(dynamicText)=>{
         padding: 20px;
         display: flex;
         align-items: flex-start;
-        height: 1084px;
-        width: 1084px;   
+        height: 1080px;
+        width: 1920px;   
     }
     .profile-image {
         width: 100px;
@@ -44,13 +44,11 @@ const tweetHtmlGenerator=(dynamicText)=>{
         margin: 0;
         font-size: 22px;
         padding-top: 25px;
-    
     }
     .username {
         color: #888;
         font-size: 20px;
         padding-top: 25px;
-    
     }
     .tweet-text {
         margin: 0;
@@ -79,12 +77,7 @@ const tweetHtmlGenerator=(dynamicText)=>{
             </div>
         </div>
     </body>
-    </html>
-    
-    `
+    </html>`
     return htmlTemplate;
 }
-
 module.exports={tweetHtmlGenerator};
-
-
