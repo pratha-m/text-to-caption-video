@@ -1,0 +1,38 @@
+button{
+  padding: 15px;
+  color: white;
+  background-color: black;
+  border-radius: 10px;
+  font-size: 22px;
+  margin-left: 5px;
+}
+input{
+  height:50px;
+  width: 350px;
+  border-radius: 10px;
+  font-size: 25px;
+  padding-left: 10px;
+}
+button:hover{
+  background-color: white;
+  color: black;
+}
+#vidContainer{
+  margin-top: 10px;
+  box-shadow: 1px 1px 18px 6px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  font-size: 22px;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  overflow: hidden;
+  min-height: 400px;
+  height: 499px;
+  width: max-content;
+  min-width:358px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+video{
+  height: 100%;
+  width: 100%;
+}
