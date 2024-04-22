@@ -44,6 +44,12 @@ const fileNameGenerator=(filePrefix)=>{
     else if(filePrefix===fileTypes.text.prefix) return filePrefix+randStr+fileTypes.text.extension; 
     else if(filePrefix===fileTypes.merged_video.prefix) return filePrefix+randStr+fileTypes.merged_video.extension; 
 }
+const deleteFiles=async(folderPath,fileNames)=>{
+    await Promise.all(fileNames.map(async(eachFile,index)=>{
+        const filePath=absolutePathGen(folderPath,eachFile);
+        await fs.promises.unlink(filePath);
+    }))
+}
 async function createFrame(textChunks,highlightInd) {
     try{
         let responseText="";
@@ -66,7 +72,6 @@ async function createFrame(textChunks,highlightInd) {
         return {status:"failed",message:"Error creating Image",error:error.message}; 
     }    
 }
-// Function to create voiceover (dummy example using FFmpeg)
 async function createVoiceover(text,i) {
     try {
         const base64String = await tts.getAudioBase64(text, {
@@ -92,6 +97,7 @@ async function createVoiceover(text,i) {
         return {status:"failed",message:"Error creating voice",error:error.message}; 
     }
 }
+
 const createVideoFfmpeg=async(imageFileName,audioFileName,i)=>{
     const {video,image,audio}=fileTypes;
 
@@ -107,18 +113,20 @@ const createVideoFfmpeg=async(imageFileName,audioFileName,i)=>{
 
     return new Promise((resolve,reject)=>{
         exec(command,async(error,stdout,stderr)=>{
-            if(error) reject();
-
+            if(error){
+                await fs.promises.unlink(audioPath); // Delete audio file
+                await fs.promises.unlink(imagePath); // Delete image file
+                reject();
+            }    
             await fs.promises.unlink(audioPath); // Delete audio file
-
             await fs.promises.unlink(imagePath); // Delete image file
 
             resolve(videoFileName);
         })
     })
 }
+
 const mergeVideoFfmpeg=async(videoFileNames)=>{
-    try{
         // -report--> this flag after the ffmpeg commands gievs a log file   
         const {text,video,merged_video}=fileTypes;
 
@@ -142,27 +150,25 @@ const mergeVideoFfmpeg=async(videoFileNames)=>{
 
         const mergeVideoCommand=`ffmpeg -f concat -safe 0 -i "${textFilePath}" -c:v copy "${mergeVideoPath}"`
 
-        exec(mergeVideoCommand,async(error,stdout,stderr)=>{
-            if(error){
+        return new Promise((resolve,reject)=>{
+            exec(mergeVideoCommand,async(error,stdout,stderr)=>{
+                if(error){
+                    await fs.promises.unlink(textFilePath);
+    
+                    await deleteFiles(video.folderPath,videoFileNames)
+    
+                    reject({status:"failed",message:"Erorr in creating merging videos",error:error.message});
+                }
                 await fs.promises.unlink(textFilePath);
-
-                throw new Error("Erorr In Executing Merging commadn"+error);
-            }
-            await fs.promises.unlink(textFilePath);
-
-            await Promise.all(videoFileNames.map(async(eachFile,index)=>{
-                const outputVideoPath=absolutePathGen(video.folderPath,eachFile);
-                await fs.promises.unlink(outputVideoPath);
-            }))
-
-            return {status:"success",message:"videos merged successfully"}
+    
+                await deleteFiles(video.folderPath,videoFileNames);
+    
+                resolve({status:"success",message:"videos merged successfully",fileName:mergedVideoName})
+            })
         })
-    }
-    catch(error){
-        return {status:"failed",message:"Erorr in creating merging videos",error:error.message}
-    }
 }
-async function createVideo(inputText){
+
+async function createEachFrameVideo(inputText){
     try{
         const textChunks=inputText.split(" ");
 
@@ -182,15 +188,11 @@ async function createVideo(inputText){
             }
             else throw new Error("Error in Creating image and audio");
         }
-        const merge=await mergeVideoFfmpeg(videoFileNames);
-        
-        if(merge.status!=="success") throw new Error(merge.error);
 
-        return {status:"success",message:"vidoe created successfully"}
+        return {status:"success",message:"vidoe created successfully",videoFileNames:videoFileNames}
     }
     catch(error){
         return {status:"failed",message:"Error in creating video",error:error.message}
     }
 }
-
-module.exports={createVideo};
+module.exports={createEachFrameVideo,mergeVideoFfmpeg,absolutePathGen,fileTypes};
