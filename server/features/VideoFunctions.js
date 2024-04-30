@@ -54,11 +54,20 @@ const deleteFiles=async(folderPath,fileNames)=>{
 async function htmlToImage(html,path) {
     const browser=await puppeteer.launch({
         args:[
-            "--disable-setuid-sandbox",
-            "--no-sandbox",
-            "--single-process",
-            "--no-zygote"
+            '--headless',
+            '--disable-web-security',
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process',
+            '--disable-gpu',
         ],
+        usePipe: true,
+        disableJavascript: true,
+        waitUntil: ["networkidle2", "domcontentloaded", "load"],
         executablePath:process.env.NODE_ENV==='production' ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath()
     }); 
 

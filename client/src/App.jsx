@@ -11,11 +11,11 @@ const App = () => {
     try{
       e.preventDefault();
       setVideoCreating(true);
-      const response=await axios.post("http://localhost:3001/create-video",{tweet:inpVal})
+      const response=await axios.post("https://text-to-caption-video-1.onrender.com/create-video",{tweet:inpVal})
       
       if(response.status!=201) throw new Error("Error in Creating Video");
 
-      setVideoUrl(`http://localhost:3001/render-video/${response.data.details}`); 
+      setVideoUrl(`https://text-to-caption-video-1.onrender.com/render-video/${response.data.details}`); 
 
       setVideoCreating(false);
     }
