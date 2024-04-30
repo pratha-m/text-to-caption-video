@@ -1,7 +1,7 @@
 const dotenv=require("dotenv");
 dotenv.config();
 const express=require("express");
-const { createEachFrameVideo, mergeVideoFfmpeg, fileTypes, absolutePathGen } = require("./features/VideoFunctions");
+const { createEachFrameVideo, mergeVideoFfmpeg, fileTypes, absolutePathGen, createFrame, createVoiceover } = require("./features/VideoFunctions");
 const fs =require("fs");
 const app=express();
 const cors=require("cors");
@@ -14,6 +14,30 @@ app.get("/",(req,res)=>{
     res.send("Home");
 })
 
+app.post("/create-frame",async(req,res)=>{
+    try{
+        const data=await createFrame(["hello","world"],0);
+
+        if(data.status!=="success") throw new Error(data.error);
+        
+        res.status(201).json({status:"success",imageFile:data.fileName})
+    }
+    catch(error){
+        return res.status(501).json({status:"failed",message:"Error in creating Image",error:error.message})
+    }
+})
+app.post("/create-audio",async(req,res)=>{
+    try{
+        const data=await createVoiceover("hello world",0);
+
+        if(data.status!=="success") throw new Error(data.error);
+        
+        res.status(201).json({status:"success",imageFile:data.fileName})
+    }
+    catch(error){
+        return res.status(501).json({status:"failed",message:"Error in creating Audio",error:error})
+    }
+})
 app.post("/create-video",async(req,res)=>{
     try{
         const {tweet}=req.body; 
@@ -57,7 +81,6 @@ app.get("/render-video/:video_file",async(req,res)=>{
         return res.status(501).json({status:"failed",message:"Error in Rendering video",error:error.message}); 
     }
 })
-
 app.listen(3001,()=>{
     console.log("Listening at PORT:3001")
 })

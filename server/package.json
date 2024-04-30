@@ -23,6 +23,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "google-tts-api": "^2.0.2",
     "node-html-to-image": "^4.0.0",
+    "puppeteer": "^22.7.1",
     "say": "^0.16.0",
     "sharp": "^0.33.3",
     "uuid": "^9.0.1",

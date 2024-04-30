@@ -5,6 +5,7 @@ const nodeHtmlToImage=require("node-html-to-image")
 const {exec}=require("child_process")
 const path = require("path");
 const {v4:uuidv4}=require("uuid");
+const puppeteer=require("puppeteer");
 
 const fileTypes={
     image:{
@@ -50,6 +51,22 @@ const deleteFiles=async(folderPath,fileNames)=>{
         await fs.promises.unlink(filePath);
     }))
 }
+async function htmlToImage(html,path) {
+    const browser = await puppeteer.launch({ 
+        executablePath:"/usr/local/bin/chromium",
+        args:[
+            '--no-sandbox',
+            '--disable-setuid-sandbox'
+        ]});
+
+    const page = await browser.newPage();
+
+    await page.setContent(html);
+
+    await page.screenshot({ path:path });
+
+    await browser.close();
+}
 async function createFrame(textChunks,highlightInd) {
     try{
         let responseText="";
@@ -65,7 +82,7 @@ async function createFrame(textChunks,highlightInd) {
     
         const imageFilePath=absolutePathGen(image.folderPath,imageFileName);
     
-        await nodeHtmlToImage({html:htmlText,output:imageFilePath})
+        await htmlToImage(htmlText,imageFilePath);
     
         return {status:"success",message:"Finish creating Image",fileName:imageFileName}; 
     } catch (error) {
@@ -199,4 +216,4 @@ async function createEachFrameVideo(inputText){
         return {status:"failed",message:"Error in creating video",error:error.message}
     }
 }
-module.exports={createEachFrameVideo,mergeVideoFfmpeg,absolutePathGen,fileTypes};
+module.exports={createEachFrameVideo,mergeVideoFfmpeg,absolutePathGen,fileTypes,createFrame,createVoiceover};
