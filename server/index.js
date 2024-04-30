@@ -1,8 +1,11 @@
+const dotenv=require("dotenv");
+dotenv.config();
 const express=require("express");
 const { createEachFrameVideo, mergeVideoFfmpeg, fileTypes, absolutePathGen } = require("./features/VideoFunctions");
 const fs =require("fs");
 const app=express();
 const cors=require("cors");
+
 
 app.use(cors())
 app.use(express.json());

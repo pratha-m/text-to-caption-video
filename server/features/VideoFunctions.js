@@ -69,6 +69,7 @@ async function createFrame(textChunks,highlightInd) {
     
         return {status:"success",message:"Finish creating Image",fileName:imageFileName}; 
     } catch (error) {
+        console.log("Image Eror"+error.message)
         return {status:"failed",message:"Error creating Image",error:error.message}; 
     }    
 }
@@ -94,6 +95,7 @@ async function createVoiceover(text,i) {
 
         return {status:"success",message:"Finish creating voice",fileName:audioFileName}; 
     } catch (error) {
+        console.log("audio Eror"+error.message)
         return {status:"failed",message:"Error creating voice",error:error.message}; 
     }
 }
@@ -116,6 +118,7 @@ const createVideoFfmpeg=async(imageFileName,audioFileName,i)=>{
             if(error){
                 await fs.promises.unlink(audioPath); // Delete audio file
                 await fs.promises.unlink(imagePath); // Delete image file
+                console.log("vid Eror"+error.message)
                 reject();
             }    
             await fs.promises.unlink(audioPath); // Delete audio file
@@ -157,6 +160,7 @@ const mergeVideoFfmpeg=async(videoFileNames)=>{
     
                     await deleteFiles(video.folderPath,videoFileNames)
     
+                    console.log("merge Eror"+error.message)
                     reject({status:"failed",message:"Erorr in creating merging videos",error:error.message});
                 }
                 await fs.promises.unlink(textFilePath);
