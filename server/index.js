@@ -5,6 +5,7 @@ const { createEachFrameVideo, mergeVideoFfmpeg, fileTypes, absolutePathGen, crea
 const fs =require("fs");
 const app=express();
 const cors=require("cors");
+const PORT=process.env.PORT || 3001
 
 
 app.use(cors())
@@ -81,6 +82,6 @@ app.get("/render-video/:video_file",async(req,res)=>{
         return res.status(501).json({status:"failed",message:"Error in Rendering video",error:error.message}); 
     }
 })
-app.listen(3001,()=>{
-    console.log("Listening at PORT:3001")
+app.listen(PORT,()=>{
+    console.log(`Listening at PORT:${PORT}`)
 })
