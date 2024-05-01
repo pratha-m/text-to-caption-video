@@ -35,7 +35,7 @@ app.post("/create-audio",async(req,res)=>{
         res.status(201).json({status:"success",imageFile:data.fileName})
     }
     catch(error){
-        return res.status(501).json({status:"failed",message:"Error in creating Audio",error:error})
+        return res.status(501).json({status:"failed",message:"Error in creating Audio",error:error.message})
     }
 })
 app.post("/create-video",async(req,res)=>{
